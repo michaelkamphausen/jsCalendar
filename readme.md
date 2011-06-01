@@ -10,6 +10,7 @@ jsCalendar is a lightweight date picker for desktop and mobile browsers.
 * single date selection mode
 * 3D calendar turn over css3 animation, supported by Safari only
 * multilingual support
+* flexible first day of the week
 * multiple calendars on one page possible
 * selecting past dates is prevented
 
@@ -35,18 +36,22 @@ You are notified when the user changes the selection by the custom events `start
 
 If you are using the single date selection mode, `startDateChanged` is the only triggered event.
 
+To initialize the calendar with start and end date, specify the attributes `data-startdate` and `data-enddate` at the jsCalender HTML element with the string representation of a JavaScript Date object.
+
+To set dates programatically, call `$(".jsCalendar").calendar().setDates(start, end)`, where `start` and `end` are Date objects representing the dates you want to set. If you pass `null` as parameter, the corresponding date selection is removed.
+
 To reset the selection programatically (e.g. with an extra button), you could trigger a `resetSelection` event on the jsCalender HTML element.
 
 From the user's perspective, range selection works like this: the first click is the start date, second click the end date, a third click resets the selection.
-If the selected end date is before the start date, they are automatically exchanged. It is possible to deselect a start or end date by clicking it without resetting the whole selection.
+If the selected end date is before the start date, they are automatically exchanged. It is possible to deselect a start or end date by clicking it without resetting the whole selection. You can implement your own date selection algorithm by rewriting the `dateSelected` method.
 
-Your can implement your own date selection algorithm by rewriting the `dateSelected` method.
+To set the first day of the week (e.g: Sunday, Monday, ...) specify the attribute `data-firstdayofweek` at the jsCalender HTML element with a value between 0 and 6.
 
-Right now, it is not possible to select a date in the past, there is no maximum selection date for the far future and it is not possible to define the first day of the week.
+Right now, it is not possible to select a date in the past and there is no maximum selection date for the far future.
 
 After initialization, the JavaScript Date object will be extended with a subset of instance methods from [datejs](http://www.datejs.com/): `clone`, `isLeapYear`, `getDaysInMonth`, `moveToFirstDayOfMonth`, `moveToLastDayOfMonth`, `addMilliseconds`, `addDays`, `addMonths` and `clearTime`.
 
-The `$` function is extended with a `slice` method to select a range from a set of elements like this `$("a").slice(3, 7)`, using the native slice implementation for arrays.
+The `$` function is extended with a `slice` method to select a range from a set of elements like this `$("a").slice(3, 7)`, using the native slice implementation for arrays. Another extension is the `calendar` method, returning the Calendar object belonging to the first matched HTML element, if available.
 
 # Example
 

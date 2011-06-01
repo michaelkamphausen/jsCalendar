@@ -23,6 +23,7 @@
             minDate,
             dateInfo,
             singleDate,
+            firstDayOfWeek = 0,
             tap = 'click',
             noAnimEnd = "noAnimationEnd",
             animEnd = Modernizr.csstransforms3d ? "webkit moz o ms khtml ".split(" ").join("AnimationEnd ") + "animationEnd" : noAnimEnd,
@@ -30,6 +31,7 @@
             endDateString = "endDate";
         
         var setDate = function (type, value) {
+            value && value.clearTime && value.clearTime();
             if (type == startDateString) {
                 startDate = value;
             } else {
@@ -64,20 +66,25 @@
             $rows.eq(1).addClass("first");
             
             singleDate = $calendar.hasClass("jsSingleDate");
+            firstDayOfWeek = $calendar.data("firstdayofweek") || firstDayOfWeek;
+
             $calendar.get(0).calendar = self;
-        
-            if ($.fn && !$.fn.slice) {
-                $.fn.slice = function (start, end) {
+            if ($.fn) {
+                $.fn.slice = $.fn.slice || function (start, end) {
                     return $([].slice.call(this, start, end));
+                }
+                $.fn.calendar = function() {
+                    return this.get(0).calendar;
                 }
             }
             
             self.extendDate();
-            today = new Date();
-            today = today.clearTime();
+            today = (new Date()).clearTime();
             minDate = today;
-            startDate = startDate;
-            endDate = endDate;
+            startDate = $calendar.data("startdate");
+            startDate = startDate ? new Date(startDate).clearTime() : null;
+            endDate = $calendar.data("enddate");
+            endDate = endDate ? new Date(endDate).clearTime() : null;
             currentMonth = (startDate || today).clone();
             
             dateInfo = $calendar.data("localized_date");
@@ -127,14 +134,20 @@
                 self.showMonth(currentMonth);
             });
             
-            $days.bind(tap, self.dateSelected);
-            
             $calendar.bind("resetDates", function (evt) {
                 setDate(startDateString, null);
                 setDate(endDateString, null);
             });
             
+            $days.bind(tap, self.dateSelected);
+            
             self.showMonth(currentMonth);
+        }
+        
+        self.setDates = function(start, end) {
+            setDate(startDateString, start && end ? new Date(Math.min(start, end)) : start);
+            !singleDate && setDate(endDateString, start && end ? 
+                (start.getTime() != end.getTime() ? new Date(Math.max(start, end)) : null) : end);
         }
         
         self.dateSelected = function (evt) {
@@ -196,7 +209,7 @@
         }
         
         self.getDay = function (day) {
-            return (day + 6) % 7; // changing first day of week
+            return (day + firstDayOfWeek) % 7; // changing first day of week
         }
         
         self.drawSelection = function () {
