@@ -22,6 +22,7 @@ jsCalendar is a lightweight date picker for desktop and mobile browsers.
 # Usage
 
 On document ready, the calendar attaches itself to HTML elements with the class name "jsCalendar". Manual initialization is not necessary. This element should have an attribute `data-localized_date` with a JSON string as value containing the localized names of months and weekdays like this one:
+
     {"days":{"names":{"min":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]}},"months":{"names":{"long":["January","February","March","April","May","June","July","August","September","October","November","December"]}}}
     
 It is possible to select a range of days between start and end date as well as selecting a single date. Range selection is default. To switch to single date selection, add the class name `jsSingleDate` to the jsCalendar HTML element before document ready.
@@ -47,6 +48,8 @@ If the selected end date is before the start date, they are automatically exchan
 
 To set the first day of the week (e.g: Sunday, Monday, ...) specify the attribute `data-firstdayofweek` at the jsCalender HTML element with a value between 0 and 6.
 
+It is possible to display a specific month by calling `$(".jsCalendar").calendar().showMonth(date)`, where `date` is a Date object representing the desired month.
+
 Right now, it is not possible to select a date in the past and there is no maximum selection date for the far future.
 
 After initialization, the JavaScript Date object will be extended with a subset of instance methods from [datejs](http://www.datejs.com/): `clone`, `isLeapYear`, `getDaysInMonth`, `moveToFirstDayOfMonth`, `moveToLastDayOfMonth`, `addMilliseconds`, `addDays`, `addMonths` and `clearTime`.
@@ -55,7 +58,7 @@ The `$` function is extended with a `slice` method to select a range from a set 
 
 # Example
 
-See index.html
+See [index.html](https://github.com/michaelkamphausen/jsCalendar/blob/master/index.html)
 
 # Supported Platforms
 
