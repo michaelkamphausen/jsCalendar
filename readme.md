@@ -25,9 +25,9 @@ On document ready, the calendar attaches itself to HTML elements with the class 
 
     {"days":{"names":{"min":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]}},"months":{"names":{"long":["January","February","March","April","May","June","July","August","September","October","November","December"]}}}
     
-It is possible to select a range of days between start and end date as well as selecting a single date. Range selection is default. To switch to single date selection, add the class name `jsSingleDate` to the jsCalendar HTML element before document ready.
+It is possible to select a range of days between start and end date as well as selecting a single date or even multiple dates. Range selection is default. To switch to single date selection, add the class name `jsSingleDate` to the jsCalendar HTML element before document ready. For multiple date selection, add the class name `jsMultipleDates` similar to the single date selection.
 
-You are notified when the user changes the selection by the custom events `startDateChanged` and `endDateChanged` on the jsCalender HTML element. So the currently selected dates can be retrieved like this:
+On single and range date selection you are notified when the user changes the selection by the custom events `startDateChanged` and `endDateChanged` on the jsCalender HTML element. So the currently selected dates can be retrieved like this:
 
     $(".jsCalendar").bind("startDateChanged", function() {
         $(this).data("startdate");
@@ -37,11 +37,20 @@ You are notified when the user changes the selection by the custom events `start
 
 If you are using the single date selection mode, `startDateChanged` is the only triggered event.
 
-To initialize the calendar with start and end date, specify the attributes `data-startdate` and `data-enddate` at the jsCalender HTML element with the string representation of a JavaScript Date object.
+For the multiple date selection the custom events `multipleChanged`, `multipleAdded` and `multipleRemoved` on the jsCalender HTML element will inform you about changes on the date selection.
+The `multipleChanged` event will be fired when a date is (un)selected and delivers an additional parameter `object` along to the event. This object stores two variables: `object.dates` is an array with all selected dates as Date() objects. Furthermore the variable `object.changedDate` stores the currently changed date as a Date() object. The data attribute also stores the same object as `object.dates` but in JSON format.
+
+    $(".jsCalendar").bind("multipleDatesChanged multipleDatesAdded multipleDatesRemoved", function(evt, object) {
+        $(this).data("multipledates"); // JSON string with all selected dates
+        object.dates; // array with all selected dates
+        object.changedDate; // string with new (un)selected date
+    });
+
+Additionally for the multiple date selection there are two events `multipleDatesAdded` and `multipleDatesRemoved`. These events have the same functionality as the `multipleDatesChanged` event but they are called specifically when a new date is selected (`multipleDatesAdded`) or an existing date is unselected (`multipleDatesRemoved`).
 
 To set dates programatically, call `$(".jsCalendar").calendar().setDates(start, end)`, where `start` and `end` are Date objects representing the dates you want to set. If you pass `null` as parameter, the corresponding date selection is removed.
 
-To reset the selection programatically (e.g. with an extra button), you could trigger a `resetSelection` event on the jsCalender HTML element.
+To reset the selection programatically (e.g. with an extra button), you could trigger a `resetDates` event on the jsCalender HTML element.
 
 From the user's perspective, range selection works like this: the first click is the start date, second click the end date, a third click resets the selection.
 If the selected end date is before the start date, they are automatically exchanged. It is possible to deselect a start or end date by clicking it without resetting the whole selection. You can implement your own date selection algorithm by rewriting the `dateSelected` method.

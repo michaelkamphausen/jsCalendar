@@ -9,17 +9,32 @@
   </head>
   
   <body>
+	<h1>jsCalendar</h1>
+	
+	<h2>Date range:</h2>
     <div class="calendar jsCalendar" data-localized_date='{"days":{"names":{"min":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]}},"months":{"names":{"long":["January","February","March","April","May","June","July","August","September","October","November","December"]}}}'></div>
-    <div class="calendar jsCalendar jsSingleDate" data-firstdayofweek="6" data-startdate="Tue Aug 23 2011 00:00:00 GMT+0200 (CEST)" data-localized_date='{"days":{"names":{"min":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]}},"months":{"names":{"long":["January","February","March","April","May","June","July","August","September","October","November","December"]}}}'></div>
+    
+	<h2>Single date:</h2>
+	<div class="calendar jsCalendar jsSingleDate" data-firstdayofweek="6" data-startdate="Sun Jan 01 2020 00:00:00 GMT+0200 (CEST)" data-localized_date='{"days":{"names":{"min":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]}},"months":{"names":{"long":["January","February","March","April","May","June","July","August","September","October","November","December"]}}}'></div>
+    
+	<h2>Multiple dates:</h2>
+	<div class="calendar jsCalendar jsMultipleDates" data-multipledates='["2011-11-19T23:00:00.000Z","2011-11-21T23:00:00.000Z","2011-11-24T23:00:00.000Z"]' data-firstdayofweek="6" data-localized_date='{"days":{"names":{"min":["So","Mo","Di","Mi","Do","Fr","Sa"]}},"months":{"names":{"long":["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"]}}}'></div>
     <!--<script type="text/javascript" src="external/zepto.js"></script>-->
     <script type="text/javascript" src="external/jquery-1.6.1.js"></script>
     <script type="text/javascript" src="external/customModernizr.js"></script>
-    <script type="text/javascript" src="calendar.js"></script>
+    <script type="text/javascript" src="calendar.min.js"></script>
     <script type="text/javascript">
-        $(".jsCalendar").bind("startDateChanged", function() {
-            $(this).data("startdate");
+        $(".jsCalendar").bind("multipleDatesChanged", function(evt, object) {
+            $(this).data("multipledates"); // JSON string with all selected dates
+			object.dates; // array with all selected dates
+        }).bind("multipleDatesAdded multipleDatesRemoved", function(evt, object) {
+			$(this).data("multipledates"); // JSON string with all selected dates
+			object.dates; // array with all selected dates
+			object.changedDate; // string with new (un)selected date
+        }).bind("startDateChanged", function() {
+            $(this).data("startdate"); // string with new selected startDate
         }).bind("endDateChanged", function() {
-            $(this).data("enddate");
+            $(this).data("enddate"); // string with new selected endDate
         });
     </script>
   </body>

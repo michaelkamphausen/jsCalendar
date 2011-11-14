@@ -18,28 +18,62 @@
         $rows,
         startDate,
         endDate,
+		multipleDatesArray = {},
         currentMonth,
         today,
         minDate,
         dateInfo,
         singleDate,
+        multipleDates,
         firstDayOfWeek = 0,
         tap = 'click',
         noAnimEnd = "noAnimationEnd",
         animEnd = Modernizr && Modernizr.csstransforms3d ? "webkit moz o ms khtml ".split(" ").join("AnimationEnd ") + "animationEnd" : noAnimEnd,
         startDateString = "startDate",
         endDateString = "endDate",
-    
+        multipleDatesString = "multipleDates",
+		
+		dateInArray = function(needle, haystack) {
+			for(var i = 0, iMax = haystack.length; i < iMax; i++) {
+				if (needle && haystack[i] && needle.getTime() === haystack[i].getTime()) {
+					return i;
+				}
+			}
+			
+			return -1;
+		},
+		
         setDate = function (type, value) {
             value && value.clearTime && value.clearTime();
-            if (type == startDateString) {
-                startDate = value;
-            } else {
-                endDate = value;
+            if (type == multipleDatesString) {
+				var dateAdded = false;
+				
+				if (value === null) {
+					multipleDatesArray = [];
+				} else {
+					var i = dateInArray(value, multipleDatesArray);
+					if (i !== -1) {
+						multipleDatesArray.splice(i, 1);
+					} else {
+						multipleDatesArray.push(value);
+						dateAdded = true;
+					}
+				}
+				$calendar
+					.data(type.toLowerCase(), JSON.stringify(multipleDatesArray))
+					.trigger(type + "Changed", {dates: multipleDatesArray, changedDate: value})
+					.trigger(type + (dateAdded ? "Added" : "Removed"), {dates: multipleDatesArray, changedDate: value})
+				;
+			} else {
+				if (type == startDateString) {
+					startDate = value;
+				} else {
+					endDate = value;
+				}
+				$calendar.data(type.toLowerCase(), !value ? "" : value.toString());
+				$calendar.trigger(type + "Changed");
             }
-            drawSelection();
-            $calendar.data(type.toLowerCase(), !value ? "" : value.toString());
-            $calendar.trigger(type + "Changed");
+			drawSelection();
         },
         
         dateSelected = function (evt) {
@@ -51,6 +85,9 @@
             var selectedDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), parseInt($this.text()));
             if (singleDate) {
                 setDate(startDateString, !startDate || (selectedDate.getTime() != startDate.getTime()) ? selectedDate : null);
+                return;
+            } else if (multipleDates) {
+                setDate(multipleDatesString, selectedDate);
                 return;
             }
             if (!startDate) {
@@ -105,7 +142,7 @@
         },
     
         drawSelection = function () {
-            $days.removeClass(startDateString).removeClass(endDateString).removeClass("betweenDates");
+            $days.removeClass(startDateString).removeClass(endDateString).removeClass(multipleDatesString).removeClass("betweenDates");
             var firstDay = currentMonth.clone().moveToFirstDayOfMonth();
             var lastDay = currentMonth.clone().moveToLastDayOfMonth();
             var dayOffset = getDay(firstDay.getDay()) - 1;
@@ -122,7 +159,12 @@
             }
             if (!!endDate && (firstDay <= endDate) && (endDate <= lastDay)) {
                 $days.eq(dayOffset + endDate.getDate()).addClass(endDateString);
-            }
+            }			
+			for(var i in multipleDatesArray) {
+				if (!!multipleDatesArray[i] && (firstDay <= multipleDatesArray[i]) && (multipleDatesArray[i] <= lastDay)) {
+					$days.eq(dayOffset + multipleDatesArray[i].getDate()).addClass(multipleDatesString);
+				}
+			}
         };
 
         self.ready = function ($element) {
@@ -149,6 +191,7 @@
             $rows.eq(1).addClass("first");
             
             singleDate = $calendar.hasClass("jsSingleDate");
+            multipleDates = $calendar.hasClass("jsMultipleDates");
             firstDayOfWeek = $calendar.data("firstdayofweek") || firstDayOfWeek;
 
             $calendar.get(0).calendar = self;
@@ -168,6 +211,17 @@
             startDate = startDate ? new Date(startDate).clearTime() : null;
             endDate = $calendar.data("enddate");
             endDate = endDate ? new Date(endDate).clearTime() : null;
+			
+            multipleDatesArray = $calendar.data("multipledates");
+			if (typeof multipleDatesArray == "string") {
+                multipleDatesArray = JSON.parse(multipleDatesArray);
+            }
+			for(var i in multipleDatesArray) {
+				multipleDatesArray[i] = new Date(multipleDatesArray[i]).clearTime();
+				
+			}
+			
+			startDate = multipleDatesArray ? multipleDatesArray[0] : startDate;			
             currentMonth = (startDate || today).clone();
             
             dateInfo = $calendar.data("localized_date");
@@ -220,6 +274,7 @@
             $calendar.bind("resetDates", function (evt) {
                 setDate(startDateString, null);
                 setDate(endDateString, null);
+                multipleDates && setDate(multipleDatesString, null);
             });
             
             $days.bind(tap, dateSelected);
@@ -228,9 +283,16 @@
         }
         
         self.setDates = function(start, end) {
-            setDate(startDateString, start && end ? new Date(Math.min(start, end)) : start);
-            !singleDate && setDate(endDateString, start && end ? 
-                (start.getTime() != end.getTime() ? new Date(Math.max(start, end)) : null) : end);
+			if (multipleDates) {
+				start = (start && start.constructor === Array) ? start : [start];				
+				for (var i = 0, iMax = start.length; i < iMax; i++) {
+					setDate(multipleDatesString, start[i]);
+				}
+			} else {
+				setDate(startDateString, start && end ? new Date(Math.min(start, end)) : start);
+				!singleDate && setDate(endDateString, start && end ? 
+					(start.getTime() != end.getTime() ? new Date(Math.max(start, end)) : null) : end);
+			}
         }
     
         self.showMonth = function (date) {
