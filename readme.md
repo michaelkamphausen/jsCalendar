@@ -17,7 +17,7 @@ jsCalendar is a lightweight date picker for desktop and mobile browsers.
 # Requirements
 
 * [jQuery](http://jquery.com/) or [Zepto.js](https://github.com/madrobby/zepto)
-* [Modernizr](http://www.modernizr.com/) or the included Modernizr custom build using a reduced subset
+* [Modernizr](http://www.modernizr.com/) or the included Modernizr custom build using a reduced subset. If Modernizr is not initialized, 3D animations will not be supported.
 
 # Usage
 

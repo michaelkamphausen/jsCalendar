@@ -26,7 +26,7 @@
         firstDayOfWeek = 0,
         tap = 'click',
         noAnimEnd = "noAnimationEnd",
-        animEnd = Modernizr.csstransforms3d ? "webkit moz o ms khtml ".split(" ").join("AnimationEnd ") + "animationEnd" : noAnimEnd,
+        animEnd = Modernizr && Modernizr.csstransforms3d ? "webkit moz o ms khtml ".split(" ").join("AnimationEnd ") + "animationEnd" : noAnimEnd,
         startDateString = "startDate",
         endDateString = "endDate",
     
