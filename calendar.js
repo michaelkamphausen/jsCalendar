@@ -159,7 +159,7 @@
             }
             if (!!endDate && (firstDay <= endDate) && (endDate <= lastDay)) {
                 $days.eq(dayOffset + endDate.getDate()).addClass(endDateString);
-            }			
+            }
 			for(var i in multipleDatesArray) {
 				if (!!multipleDatesArray[i] && (firstDay <= multipleDatesArray[i]) && (multipleDatesArray[i] <= lastDay)) {
 					$days.eq(dayOffset + multipleDatesArray[i].getDate()).addClass(multipleDatesString);
@@ -220,9 +220,8 @@
 				multipleDatesArray[i] = new Date(multipleDatesArray[i]).clearTime();
 				
 			}
-			
-			startDate = multipleDatesArray ? multipleDatesArray[0] : startDate;			
-            currentMonth = (startDate || today).clone();
+					
+            currentMonth = (startDate || (multipleDatesArray ? multipleDatesArray[0] : false) || today).clone();
             
             dateInfo = $calendar.data("localized_date");
             if (typeof dateInfo == "string") {
@@ -314,12 +313,9 @@
             for (var firstDay = getDay(date.clone().moveToFirstDayOfMonth().getDay()) - 1, lastDay = firstDay + date.clone().moveToLastDayOfMonth().getDate(), i = 0, maxI = $days.length; i < maxI; i++) {
                 var isDay = (i > firstDay) && (i <= lastDay);
                 var $day = $days.eq(i).text(isDay ? ("" + (i - firstDay)) : "");
-                if (isDay && (beforeMinDate || (includesToday && (i - firstDay < minDay)))) {
-                    $day.addClass("inactive");
-                }
-                if (includesToday && today.getDate() == (i - firstDay)) {
-                    $day.addClass("today");
-                }
+                $day.toggleClass("noDate", (!isDay));
+				$day.toggleClass("inactive", (isDay && (beforeMinDate || (includesToday && (i - firstDay < minDay)))));
+				$day.toggleClass("today", (includesToday && today.getDate() == (i - firstDay)));                
                 if (i == lastDay) {
                     $day.closest("tr").addClass("last").next().addClass("hidden").next().addClass("hidden");
                 }
