@@ -206,7 +206,7 @@
             
             extendDate();
             today = (new Date()).clearTime();
-            minDate = today;
+            minDate = $calendar.data("mindate") ? new Date($calendar.data("mindate")).clearTime() : today;
             startDate = $calendar.data("startdate");
             startDate = startDate ? new Date(startDate).clearTime() : null;
             endDate = $calendar.data("enddate");
@@ -295,8 +295,6 @@
         }
     
         self.showMonth = function (date) {
-            minDate = new Date(Math.max(minDate, today));
-        
             if (!!dateInfo) {
                 $month.text(dateInfo.months.names["long"][date.getMonth()] + " " + date.getFullYear());
                 for (var i = 0, maxI = $weekdays.length; i < maxI; i++) {
