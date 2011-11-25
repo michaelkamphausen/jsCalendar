@@ -12,7 +12,8 @@ jsCalendar is a lightweight date picker for desktop and mobile browsers.
 * multilingual support
 * flexible first day of the week
 * multiple calendars on one page possible
-* selecting past dates is prevented
+* past dates are prevented by default, but can be configured
+* multiple selections possible (without selection range)
 
 # Requirements
 
@@ -24,8 +25,9 @@ jsCalendar is a lightweight date picker for desktop and mobile browsers.
 On document ready, the calendar attaches itself to HTML elements with the class name "jsCalendar". Manual initialization is not necessary. This element should have an attribute `data-localized_date` with a JSON string as value containing the localized names of months and weekdays like this one:
 
     {"days":{"names":{"min":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]}},"months":{"names":{"long":["January","February","March","April","May","June","July","August","September","October","November","December"]}}}
-    
-It is possible to select a range of days between start and end date as well as selecting a single date or even multiple dates. Range selection is default. To switch to single date selection, add the class name `jsSingleDate` to the jsCalendar HTML element before document ready. For multiple date selection, add the class name `jsMultipleDates` similar to the single date selection.
+
+### Default and single date selection mode only:
+It is possible to select a range of days between start and end date as well as selecting a single date or even multiple dates. Range selection is default. To switch to single date selection, add the class name `jsSingleDate` to the jsCalendar HTML element before document ready.
 
 On single and range date selection you are notified when the user changes the selection by the custom events `startDateChanged` and `endDateChanged` on the jsCalender HTML element. So the currently selected dates can be retrieved like this:
 
@@ -36,6 +38,10 @@ On single and range date selection you are notified when the user changes the se
     });
 
 If you are using the single date selection mode, `startDateChanged` is the only triggered event.
+
+### Multiple date selection only:
+For multiple date selection, add the class name `jsMultipleDates` similar to the single date selection.
+Also, a maximum number of dates can be set with the attribute `data-multipledates-max`.
 
 For the multiple date selection the custom events `multipleChanged`, `multipleAdded` and `multipleRemoved` on the jsCalender HTML element will inform you about changes on the date selection.
 The `multipleChanged` event will be fired when a date is (un)selected and delivers an additional parameter `object` along to the event. This object stores two variables: `object.dates` is an array with all selected dates as Date() objects. Furthermore the variable `object.changedDate` stores the currently changed date as a Date() object. The data attribute also stores the same object as `object.dates` but in JSON format.
@@ -48,6 +54,7 @@ The `multipleChanged` event will be fired when a date is (un)selected and delive
 
 Additionally for the multiple date selection there are two events `multipleDatesAdded` and `multipleDatesRemoved`. These events have the same functionality as the `multipleDatesChanged` event but they are called specifically when a new date is selected (`multipleDatesAdded`) or an existing date is unselected (`multipleDatesRemoved`).
 
+## global functions
 To set dates programatically, call `$(".jsCalendar").calendar().setDates(start, end)`, where `start` and `end` are Date objects representing the dates you want to set. If you pass `null` as parameter, the corresponding date selection is removed.
 
 To reset the selection programatically (e.g. with an extra button), you could trigger a `resetDates` event on the jsCalender HTML element.
@@ -59,7 +66,7 @@ To set the first day of the week (e.g: Sunday, Monday, ...) specify the attribut
 
 It is possible to display a specific month by calling `$(".jsCalendar").calendar().showMonth(date)`, where `date` is a Date object representing the desired month.
 
-Right now, it is not possible to select a date in the past and there is no maximum selection date for the far future.
+By default, it is not possible to select a date in the past, but a minimal date can be set with the attribute `data-mindate`. Also, there is no maximum selection date for the far future.
 
 After initialization, the JavaScript Date object will be extended with a subset of instance methods from [datejs](http://www.datejs.com/): `clone`, `isLeapYear`, `getDaysInMonth`, `moveToFirstDayOfMonth`, `moveToLastDayOfMonth`, `addMilliseconds`, `addDays`, `addMonths` and `clearTime`.
 

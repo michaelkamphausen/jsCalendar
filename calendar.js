@@ -25,6 +25,7 @@
         dateInfo,
         singleDate,
         multipleDates,
+		multipleDatesMax,
         firstDayOfWeek = 0,
         tap = 'click',
         noAnimEnd = "noAnimationEnd",
@@ -45,9 +46,9 @@
 		
         setDate = function (type, value) {
             value && value.clearTime && value.clearTime();
-            if (type == multipleDatesString) {
+            if (type == multipleDatesString) {				
 				var dateAdded = false;
-				
+
 				if (value === null) {
 					multipleDatesArray = [];
 				} else {
@@ -55,8 +56,12 @@
 					if (i !== -1) {
 						multipleDatesArray.splice(i, 1);
 					} else {
-						multipleDatesArray.push(value);
-						dateAdded = true;
+						if ( multipleDatesMax !== null && multipleDatesArray.length >= ~~multipleDatesMax ) {
+							return false;
+						} else {							
+							multipleDatesArray.push(value);
+							dateAdded = true;
+						}
 					}
 				}
 				$calendar
@@ -192,6 +197,7 @@
             
             singleDate = $calendar.hasClass("jsSingleDate");
             multipleDates = $calendar.hasClass("jsMultipleDates");
+			multipleDatesMax = $calendar.data("multipledates-max") || null;
             firstDayOfWeek = $calendar.data("firstdayofweek") || firstDayOfWeek;
 
             $calendar.get(0).calendar = self;
