@@ -309,7 +309,7 @@
 			}
 			
 			var beforeMinDate = minDate > date.clone().moveToLastDayOfMonth();
-			var includesToday = !beforeMinDate && (minDate >= date.clone().moveToFirstDayOfMonth());
+			var includesToday = !beforeMinDate && (today.clone().moveToFirstDayOfMonth() - date.clone().moveToFirstDayOfMonth() === 0 );
 			var minDay = minDate.getDate();
 			
 			$days.addClass("noTransition").removeClass("inactive");
