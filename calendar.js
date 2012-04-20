@@ -97,7 +97,9 @@
 	jsCalendar is licensed under the terms of the MIT License.
 */
 
-(function() {
+(function(window) {
+	document = window.document;
+
 	$(document).ready(function() {
 		var $calendars = $(".jsCalendar");
 		for (var i = 0, maxI = $calendars.length; i < maxI; i++) {
@@ -436,4 +438,6 @@
 			drawSelection();
 		}
 	}
-})()
+	
+	window.Calendar = window.Calendar || Calendar;
+})(window);
