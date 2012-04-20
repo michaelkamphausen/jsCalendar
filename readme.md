@@ -66,7 +66,7 @@ To set the first day of the week (e.g: Sunday, Monday, ...) specify the attribut
 
 It is possible to display a specific month by calling `$(".jsCalendar").calendar().showMonth(date)`, where `date` is a Date object representing the desired month.
 
-By default, it is not possible to select a date in the past, but a minimal date can be set with the attribute `data-mindate`. Also, there is no maximum selection date for the far future.
+By default, it is not possible to select a date in the past, but a minimal date can be set with the attribute `data-mindate`. Also, there is no maximum selection date for the far future by default, but it can be set with the attribute `data-mindate`.
 
 After initialization, the JavaScript Date object will be extended with a subset of instance methods from [datejs](http://www.datejs.com/): `clone`, `isLeapYear`, `getDaysInMonth`, `moveToFirstDayOfMonth`, `moveToLastDayOfMonth`, `addMilliseconds`, `addDays`, `addMonths` and `clearTime`.
 
