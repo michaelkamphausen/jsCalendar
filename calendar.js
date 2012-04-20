@@ -67,7 +67,7 @@
 
 	It is possible to display a specific month by calling `$(".jsCalendar").calendar().showMonth(date)`, where `date` is a Date object representing the desired month.
 
-	By default, it is not possible to select a date in the past, but a minimal date can be set with the attribute `data-mindate`. Also, there is no maximum selection date for the far future by default, but it can be set with the attribute `data-mindate`.
+	By default, it is not possible to select a date in the past, but a minimal date can be set with the attribute `data-mindate`. Also, there is no maximum selection date for the far future by default, but it can be set with the attribute `data-maxdate` (also accepts the value `today`).
 
 	After initialization, the JavaScript Date object will be extended with a subset of instance methods from [datejs](http://www.datejs.com/): `clone`, `isLeapYear`, `getDaysInMonth`, `moveToFirstDayOfMonth`, `moveToLastDayOfMonth`, `addMilliseconds`, `addDays`, `addMonths` and `clearTime`.
 
@@ -313,7 +313,7 @@
 			extendDate();
 			today = (new Date()).clearTime();
 			minDate = $calendar.data("mindate") ? new Date($calendar.data("mindate")).clearTime() : today;
-			maxDate = $calendar.data("maxdate") ? new Date($calendar.data("maxdate")).clearTime() : false;
+			maxDate = $calendar.data("maxdate") ? ($calendar.data("maxdate").trim() == "today" ? today : new Date($calendar.data("maxdate")).clearTime()) : false;
 			startDate = $calendar.data("startdate");
 			startDate = startDate ? new Date(startDate).clearTime() : null;
 			endDate = $calendar.data("enddate");
@@ -412,8 +412,6 @@
 			var afterMaxDate = maxDate ? maxDate < date.clone().moveToFirstDayOfMonth() : false;
 			var includesMinDate = (minDate.clone().moveToFirstDayOfMonth() - date.clone().moveToFirstDayOfMonth() === 0 );
 			var includesMaxDate = maxDate ? (maxDate.clone().moveToFirstDayOfMonth() - date.clone().moveToFirstDayOfMonth() === 0 ) : false;
-			
-						
 			var includesToday = (today.clone().moveToFirstDayOfMonth() - date.clone().moveToFirstDayOfMonth() === 0 );
 			var minDay = minDate.getDate();
 			var maxDay = maxDate && maxDate.getDate();
