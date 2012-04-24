@@ -98,7 +98,7 @@
 */
 
 (function(window) {
-	document = window.document;
+	var document = window.document;
 
 	$(document).ready(function() {
 		var $calendars = $(".jsCalendar");
