@@ -107,7 +107,7 @@
 			calendar.ready($calendars.eq(i));
 		}
 	});
-	
+
 	function Calendar() {
 		var self = this,
 		$calendar,
@@ -131,24 +131,24 @@
 		firstDayOfWeek = 0,
 		tap = 'click',
 		noAnimEnd = "noAnimationEnd",
-		animEnd = typeof Modernizr !== 'undefined' && Modernizr.csstransforms3d ? "webkit moz o ms khtml ".split(" ").join("AnimationEnd ") + "animationEnd" : noAnimEnd,
+		animEnd = typeof Modernizr !== 'undefined' && Modernizr.csstransforms3d ? "webkitAnimationEnd oanimationend MSAnimationEnd animationend" : noAnimEnd,
 		startDateString = "startDate",
 		endDateString = "endDate",
 		multipleDatesString = "multipleDates",
-		
+
 		dateInArray = function(needle, haystack) {
 			for(var i = 0, iMax = haystack.length; i < iMax; i++) {
 				if (needle && haystack[i] && needle.getTime() === haystack[i].getTime()) {
 					return i;
 				}
 			}
-			
+
 			return -1;
 		},
-		
+
 		setDate = function (type, value) {
 			value && value.clearTime && value.clearTime();
-			if (type == multipleDatesString) {				
+			if (type == multipleDatesString) {
 				var dateAdded = false;
 
 				if (value === null) {
@@ -160,7 +160,7 @@
 					} else {
 						if ( multipleDatesMax !== null && multipleDatesArray.length >= ~~multipleDatesMax ) {
 							return false;
-						} else {							
+						} else {
 							multipleDatesArray.push(value);
 							dateAdded = true;
 						}
@@ -182,7 +182,7 @@
 			}
 			drawSelection();
 		},
-		
+
 		dateSelected = function (evt) {
 			evt.preventDefault();
 			var $this = $(this);
@@ -230,7 +230,7 @@
 				}
 			}
 		},
-	
+
 		extendDate = function () {
 			/* subset from date.js, http://www.datejs.com/ */
 			Date.prototype.clone=function(){return new Date(this.getTime());}
@@ -243,17 +243,17 @@
 			Date.prototype.addMonths=function(value){var n=this.getDate();this.setDate(1);this.setMonth(this.getMonth()+value);this.setDate(Math.min(n,this.getDaysInMonth()));return this;}
 			Date.prototype.clearTime=function(){this.setHours(0);this.setMinutes(0);this.setSeconds(0);this.setMilliseconds(0);return this;}
 		},
-	
+
 		getDay = function (day) {
 			return (day + firstDayOfWeek) % 7; // changing first day of week
 		},
-	
+
 		drawSelection = function () {
 			$days.removeClass(startDateString).removeClass(endDateString).removeClass(multipleDatesString).removeClass("betweenDates");
 			var firstDay = currentMonth.clone().moveToFirstDayOfMonth();
 			var lastDay = currentMonth.clone().moveToLastDayOfMonth();
 			var dayOffset = getDay(firstDay.getDay()) - 1;
-			
+
 			if (!!startDate && !!endDate && (startDate < lastDay) && (endDate > firstDay)) {
 				var firstBetweenDay = new Date(Math.max(firstDay, startDate.clone().addDays(1)));
 				var lastBetweenDay = new Date(Math.min(lastDay, endDate.clone().addDays(-1)));
@@ -296,7 +296,7 @@
 			$days = $calendar.find("td a");
 			$rows = $calendar.find("tr");
 			$rows.eq(1).addClass("first");
-			
+
 			singleDate = $calendar.hasClass("jsSingleDate");
 			multipleDates = $calendar.hasClass("jsMultipleDates");
 			multipleDatesMax = $calendar.data("multipledates-max") || null;
@@ -311,7 +311,7 @@
 					return this.get(0).calendar;
 				}
 			}
-			
+
 			extendDate();
 			today = (new Date()).clearTime();
 			minDate = $calendar.data("mindate") ? new Date($calendar.data("mindate")).clearTime() : today;
@@ -320,23 +320,23 @@
 			startDate = startDate ? new Date(startDate).clearTime() : null;
 			endDate = $calendar.data("enddate");
 			endDate = endDate ? new Date(endDate).clearTime() : null;
-			
+
 			multipleDatesArray = $calendar.data("multipledates");
 			if (typeof multipleDatesArray == "string") {
 				multipleDatesArray = JSON.parse(multipleDatesArray);
 			}
 			for(var i in multipleDatesArray) {
 				multipleDatesArray[i] = new Date(multipleDatesArray[i]).clearTime();
-				
+
 			}
-					
+
 			currentMonth = (startDate || (multipleDatesArray ? multipleDatesArray[0] : false) || today).clone();
-			
+
 			dateInfo = $calendar.data("localized_date");
 			if (typeof dateInfo == "string") {
 				dateInfo = JSON.parse(dateInfo);
 			}
-			
+
 			var $monthGrid = $calendar.find(".calGrid");
 			var animationQueue = [];
 			var isAnimating = function(node) {
@@ -349,7 +349,7 @@
 			var nextAnimation = function() {
 				if (animationQueue.length > 0) {
 					setTimeout(function() {
-					  animationQueue.shift().trigger(tap);
+						animationQueue.shift().trigger(tap);
 					}, 0);
 				}
 			}
@@ -359,11 +359,11 @@
 				currentMonth = currentMonth.addMonths(-1);
 				var $page = $('<table>' + $calendar.find("table").html() + '</table>');
 				$monthGrid.append($page);
-				$days.closest("table").addClass("turndown").bind(animEnd, function (evt) {
+				$days.closest("table").bind(animEnd, function (evt) {
 					$(this).removeClass("turndown").unbind(animEnd);
 					$page.remove();
 					nextAnimation();
-				}).trigger(noAnimEnd);
+				}).addClass("turndown").trigger(noAnimEnd);
 				self.showMonth(currentMonth);
 			});
 			$next.bind(tap, function (evt) {
@@ -378,31 +378,31 @@
 				}).trigger(noAnimEnd);
 				self.showMonth(currentMonth);
 			});
-			
+
 			$calendar.bind("resetDates", function (evt) {
 				setDate(startDateString, null);
 				setDate(endDateString, null);
 				multipleDates && setDate(multipleDatesString, null);
 			});
-			
+
 			$days.bind(tap, dateSelected);
-			
+
 			self.showMonth(currentMonth);
 		}
-		
+
 		self.setDates = function(start, end) {
 			if (multipleDates) {
-				start = (start && start.constructor === Array) ? start : [start];				
+				start = (start && start.constructor === Array) ? start : [start];
 				for (var i = 0, iMax = start.length; i < iMax; i++) {
 					setDate(multipleDatesString, start[i]);
 				}
 			} else {
 				setDate(startDateString, start && end ? new Date(Math.min(start, end)) : start);
-				!singleDate && setDate(endDateString, start && end ? 
+				!singleDate && setDate(endDateString, start && end ?
 					(start.getTime() != end.getTime() ? new Date(Math.max(start, end)) : null) : end);
 			}
 		}
-	
+
 		self.showMonth = function (date) {
 			if (!!dateInfo) {
 				$month.text(dateInfo.months.names["long"][date.getMonth()] + " " + date.getFullYear());
@@ -427,7 +427,7 @@
 					(beforeMinDate || (includesMinDate && (i - firstDay < minDay))) ||
 					(afterMaxDate || (includesMaxDate && (i - firstDay > maxDay)))
 				));
-				$day.toggleClass("today", (includesToday && today.getDate() == (i - firstDay)));				
+				$day.toggleClass("today", (includesToday && today.getDate() == (i - firstDay)));
 				if (i == lastDay) {
 					$day.closest("tr").addClass("last").next().addClass("hidden").next().addClass("hidden");
 				}
@@ -438,6 +438,6 @@
 			drawSelection();
 		}
 	}
-	
+
 	window.Calendar = window.Calendar || Calendar;
 })(window);
